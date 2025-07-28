@@ -687,12 +687,33 @@ class LoLEsportsApp {
             </div>
             ${event.state === 'completed' ? `<span class="fs-4 fw-bold text-warning">${team1.gameWins}</span>` : ''}
           </div>
+      <div class="row g-3 align-items-center">
+        <div class="col-md-5">
+          <div class="d-flex align-items-center team ${team1Winner}">
+            <img src="${team1.image}" alt="${team1.code}" class="team-logo me-2"
+                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUiIGhlaWdodD0iNDUiIHZpZXdCb3g9IjAgMCA0NSA0NSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ1IiBoZWlnaHQ9IjQ1IiBmaWxsPSIjNDYzNzE0Ii8+CjxjaXJjbGUgY3g9IjIyLjUiIGN5PSIyMi41IiByPSI4IiBmaWxsPSIjQzg5QjNDIi8+CjwvdXZnPg=='">
+            <div class="flex-grow-1">
+              <div class="fw-bold">${team1.code || 'TBD'}</div>
+              <small class="text-muted">${team1.name || ''}</small>
+            </div>
+            ${event.state === 'completed' ? `<span class="fs-4 fw-bold text-warning">${team1.gameWins}</span>` : ''}
+          </div>
         </div>
         
         <div class="col-2 text-center">
           <strong class="text-warning">VS</strong>
         </div>
         
+        <div class="col-md-5">
+          <div class="d-flex align-items-center team ${team2Winner}">
+            <img src="${team2.image}" alt="${team2.code}" class="team-logo me-2"
+                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUiIGhlaWdodD0iNDUiIHZpZXdCb3g9IjAgMCA0NSA0NSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ1IiBoZWlnaHQ9IjQ1IiBmaWxsPSIjNDYzNzE0Ii8+CjxjaXJjbGUgY3g9IjIyLjUiIGN5PSIyMi41IiByPSI4IiBmaWxsPSIjQzg5QjNDIi8+CjwvdXZnPg=='">
+            <div class="flex-grow-1">
+              <div class="fw-bold">${team2.code || 'TBD'}</div>
+              <small class="text-muted">${team2.name || ''}</small>
+            </div>
+            ${event.state === 'completed' ? `<span class="fs-4 fw-bold text-warning">${team2.gameWins}</span>` : ''}
+          </div>
         <div class="col-md-5">
           <div class="d-flex align-items-center team ${team2Winner}">
             <img src="${team2.image}" alt="${team2.code}" class="team-logo me-2"
