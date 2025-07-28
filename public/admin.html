@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Admin Panel - LoL Esports</title>
+	<meta name="theme-color" content="#C89B3C">
+
+
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Icons -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+	<style>
+		:root {
+			--primary-gold: #C89B3C;
+			--dark-bg: #0F1419;
+			--card-bg: #1E2328;
+			--border-color: #463714;
+			--text-light: #FFFFFF;
+			--text-white: #FFFFFF;
+		}
+
+		body {
+			background: linear-gradient(135deg, var(--dark-bg) 0%, var(--card-bg) 100%);
+			color: #FFFFFF;
+			min-height: 100vh;
+			font-size: 14px;
+		}
+
+		/* Mobile-first responsive design */
+		@media (max-width: 768px) {
+			body {
+				font-size: 16px;
+			}
+
+			.container-fluid {
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+
+			.card {
+				margin-bottom: 15px;
+			}
+
+			.btn {
+				padding: 12px 20px;
+				font-size: 16px;
+				min-height: 44px;
+			}
+
+			.btn-sm {
+				padding: 8px 16px;
+				font-size: 14px;
+				min-height: 36px;
+			}
+
+			.btn-xs {
+				padding: 6px 12px;
+				font-size: 12px;
+				min-height: 32px;
+			}
+
+			.form-control {
+				padding: 12px 16px;
+				font-size: 16px;
+				min-height: 44px;
+			}
+
+			.navbar-brand {
+				font-size: 1.2rem !important;
+			}
+
+			.stats-card .card-body {
+				padding: 15px 10px;
+			}
+
+			.stats-card h4 {
+				font-size: 0.9rem;
+				margin-bottom: 5px;
+			}
+
+			.stats-card h2 {
+				font-size: 1.5rem;
+				margin-bottom: 0;
+			}
+
+			.banner-item {
+				padding: 12px;
+				margin-bottom: 10px;
+			}
+
+			.banner-item .row {
+				margin: 0;
+			}
+
+			.banner-item .col-4,
+			.banner-item .col-8 {
+				padding: 0 5px;
+			}
+
+			.banner-item img {
+				max-height: 60px !important;
+			}
+
+			.nav-tabs .nav-link {
+				padding: 12px 16px;
+				font-size: 14px;
+				min-height: 44px;
+			}
+
+			.modal-dialog {
+				margin: 10px;
+				max-width: calc(100% - 20px);
+			}
+
+			.modal-body {
+				padding: 15px;
+			}
+
+			.modal-footer {
+				padding: 10px 15px;
+			}
+
+			.dropdown-menu {
+				min-width: 200px;
+			}
+
+			.dropdown-item {
+				padding: 12px 16px;
+				min-height: 44px;
+			}
+		}
+
+		.navbar {
+			background: rgba(30, 35, 40, 0.95) !important;
+			border-bottom: 2px solid var(--primary-gold);
+			backdrop-filter: blur(10px);
+			padding: 10px 0;
+		}
+
+		.navbar-brand {
+			color: var(--primary-gold) !important;
+			font-weight: bold;
+			font-size: 1.5rem;
+		}
+
+		.card {
+			background: rgba(30, 35, 40, 0.9);
+			border: 1px solid var(--border-color);
+			border-radius: 12px;
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+			margin-bottom: 20px;
+		}
+
+		.card-header {
+			background: linear-gradient(45deg, var(--primary-gold), #A17A2B);
+			color: var(--dark-bg);
+			font-weight: bold;
+			border-bottom: none;
+			padding: 15px 20px;
+		}
+
+		.btn-primary {
+			background: var(--primary-gold);
+			border-color: var(--primary-gold);
+			color: var(--dark-bg);
+			font-weight: 500;
+			transition: all 0.3s ease;
+		}
+
+		.btn-primary:hover {
+			background: #A17A2B;
+			border-color: #A17A2B;
+			color: var(--dark-bg);
+			transform: translateY(-1px);
+		}
+
+		.btn-success {
+			background: #28a745;
+			border-color: #28a745;
+			transition: all 0.3s ease;
+		}
+
+		.btn-success:hover {
+			background: #218838;
+			border-color: #218838;
+			transform: translateY(-1px);
+		}
+
+		.btn-danger {
+			background: #dc3545;
+			border-color: #dc3545;
+			transition: all 0.3s ease;
+		}
+
+		.btn-danger:hover {
+			background: #c82333;
+			border-color: #c82333;
+			transform: translateY(-1px);
+		}
+
+		.form-control {
+			background: rgba(15, 20, 25, 0.8);
+			border: 1px solid var(--border-color);
+			color: #FFFFFF;
+			transition: all 0.3s ease;
+		}
+
+		.form-control::placeholder {
+			color: rgba(255, 255, 255, 0.6);
+		}
+
+		.form-control:focus {
+			background: rgba(15, 20, 25, 0.9);
+			border-color: var(--primary-gold);
+			color: #FFFFFF;
+			box-shadow: 0 0 0 0.2rem rgba(200, 155, 60, 0.25);
+			transform: translateY(-1px);
+		}
+
+		.form-label {
+			color: #FFFFFF;
+			font-weight: 500;
+			margin-bottom: 8px;
+		}
+
+		.nav-tabs {
+			border-bottom: 1px solid var(--border-color);
+		}
+
+		.nav-tabs .nav-link {
+			color: #FFFFFF;
+			border: none;
+			background: rgba(30, 35, 40, 0.6);
+			border-radius: 8px 8px 0 0;
+			margin-right: 5px;
+			transition: all 0.3s ease;
+		}
+
+		.nav-tabs .nav-link.active {
+			background: var(--primary-gold);
+			color: var(--dark-bg);
+			font-weight: bold;
+		}
+
+		.nav-tabs .nav-link:hover {
+			background: rgba(200, 155, 60, 0.3);
+			color: var(--primary-gold);
+		}
+
+		.banner-item {
+			background: rgba(15, 20, 25, 0.8);
+			border: 1px solid var(--border-color);
+			border-radius: 8px;
+			padding: 15px;
+			margin-bottom: 15px;
+			transition: all 0.3s ease;
+		}
+
+		.banner-item:hover {
+			border-color: var(--primary-gold);
+			box-shadow: 0 4px 15px rgba(200, 155, 60, 0.2);
+			transform: translateY(-2px);
+		}
+
+		.modal-content {
+			background: var(--card-bg);
+			border: 1px solid var(--border-color);
+			color: #FFFFFF;
+			border-radius: 12px;
+		}
+
+		.modal-header {
+			border-bottom: 1px solid var(--border-color);
+			padding: 20px;
+		}
+
+		.modal-footer {
+			border-top: 1px solid var(--border-color);
+			padding: 15px 20px;
+		}
+
+		.text-gold {
+			color: var(--primary-gold) !important;
+		}
+
+		.text-light {
+			color: #FFFFFF !important;
+		}
+
+		.text-muted {
+			color: #FFFFFF !important;
+		}
+
+		.dropdown-item-text {
+			color: #FFFFFF !important;
+		}
+
+		.bg-dark-custom {
+			background: rgba(15, 20, 25, 0.9) !important;
+		}
+
+		/* Đảm bảo tất cả text là màu trắng */
+		p,
+		span,
+		div,
+		li,
+		label,
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6,
+		strong,
+		em {
+			color: #FFFFFF !important;
+		}
+
+		.form-text {
+			color: rgba(255, 255, 255, 0.7) !important;
+			font-size: 12px;
+		}
+
+		.dropdown-item {
+			color: #FFFFFF !important;
+			transition: all 0.3s ease;
+		}
+
+		.dropdown-item:hover {
+			background-color: rgba(200, 155, 60, 0.2) !important;
+			color: #FFFFFF !important;
+		}
+
+		.alert {
+			color: #FFFFFF !important;
+			border-radius: 8px;
+			border: none;
+		}
+
+		.list-unstyled li {
+			color: #FFFFFF !important;
+			padding: 8px 0;
+		}
+
+		.login-container {
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 20px;
+		}
+
+		.stats-card {
+			background: linear-gradient(135deg, var(--primary-gold), #A17A2B);
+			color: var(--dark-bg);
+			border: none;
+			transition: all 0.3s ease;
+		}
+
+		.stats-card:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 8px 25px rgba(200, 155, 60, 0.3);
+		}
+
+		.loading-spinner {
+			display: inline-block;
+			width: 20px;
+			height: 20px;
+			border: 3px solid rgba(255, 255, 255, 0.3);
+			border-radius: 50%;
+			border-top-color: var(--primary-gold);
+			animation: spin 1s ease-in-out infinite;
+		}
+
+		@keyframes spin {
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		/* Mobile-specific improvements */
+		@media (max-width: 576px) {
+			.container-fluid {
+				padding-left: 5px;
+				padding-right: 5px;
+			}
+
+			.card-header {
+				padding: 12px 15px;
+				font-size: 14px;
+			}
+
+			.card-body {
+				padding: 15px;
+			}
+
+			.banner-item {
+				padding: 10px;
+			}
+
+			.banner-item .btn {
+				padding: 6px 12px;
+				font-size: 12px;
+				min-height: 32px;
+			}
+
+			.stats-card .card-body {
+				padding: 10px 5px;
+			}
+
+			.stats-card h4 {
+				font-size: 0.8rem;
+			}
+
+			.stats-card h2 {
+				font-size: 1.3rem;
+			}
+
+			.nav-tabs .nav-link {
+				padding: 10px 12px;
+				font-size: 13px;
+			}
+
+			.modal-dialog {
+				margin: 5px;
+				max-width: calc(100% - 10px);
+			}
+
+			.modal-header,
+			.modal-body,
+			.modal-footer {
+				padding: 15px;
+			}
+		}
+
+		/* Touch-friendly improvements */
+		.btn,
+		.nav-link,
+		.dropdown-item {
+			-webkit-tap-highlight-color: transparent;
+			touch-action: manipulation;
+		}
+
+		/* Smooth scrolling */
+		html {
+			scroll-behavior: smooth;
+		}
+
+		/* Better focus indicators for accessibility */
+		.btn:focus,
+		.form-control:focus,
+		.nav-link:focus {
+			outline: 2px solid var(--primary-gold);
+			outline-offset: 2px;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Login Section -->
+	<div id="login-section" class="login-container">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6">
+					<div class="card">
+						<div class="card-header text-center">
+							<h3 class="mb-0"><i class="bi bi-shield-lock"></i> Admin Login</h3>
+						</div>
+						<div class="card-body">
+							<div id="login-alert"></div>
+							<form id="login-form">
+								<div class="mb-3">
+									<label for="username" class="form-label">
+										<i class="bi bi-person"></i> Username
+									</label>
+									<input type="text" class="form-control" id="username" name="username" required>
+								</div>
+								<div class="mb-3">
+									<label for="password" class="form-label">
+										<i class="bi bi-lock"></i> Password
+									</label>
+									<input type="password" class="form-control" id="password" name="password" required>
+								</div>
+								<button type="submit" class="btn btn-primary w-100">
+									<i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Admin Panel -->
+	<div id="admin-panel" class="d-none">
+		<!-- Navbar -->
+		<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="#">
+					<i class="bi bi-trophy"></i> <span class="d-none d-sm-inline">LoL Esports Admin</span>
+					<span class="d-inline d-sm-none">Admin</span>
+				</a>
+				<div class="navbar-nav ms-auto">
+					<div class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle text-gold" href="#" role="button" data-bs-toggle="dropdown">
+							<i class="bi bi-person-circle"></i>
+							<span id="user-name" class="d-none d-sm-inline"></span>
+						</a>
+						<ul class="dropdown-menu dropdown-menu-end bg-dark-custom">
+							<li><span class="dropdown-item-text text-light">Đăng nhập: <span id="login-time"></span></span></li>
+							<li>
+								<hr class="dropdown-divider">
+							</li>
+							<li><a class="dropdown-item text-danger" href="#" id="logout-btn">
+									<i class="bi bi-box-arrow-right"></i> Đăng xuất
+								</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container-fluid py-4">
+			<!-- Alert Messages -->
+			<div id="admin-alert"></div>
+
+			<!-- Stats Cards -->
+			<div class="row mb-4">
+				<div class="col-6 col-md-3 mb-3">
+					<div class="card stats-card">
+						<div class="card-body text-center">
+							<i class="bi bi-images" style="font-size: 1.5rem;"></i>
+							<h4 class="mt-2 mb-1">Banner 1</h4>
+							<h2 id="banner1-count" class="mb-0">0</h2>
+						</div>
+					</div>
+				</div>
+				<div class="col-6 col-md-3 mb-3">
+					<div class="card stats-card">
+						<div class="card-body text-center">
+							<i class="bi bi-image" style="font-size: 1.5rem;"></i>
+							<h4 class="mt-2 mb-1">Banner 2</h4>
+							<h2 id="banner2-count" class="mb-0">0</h2>
+						</div>
+					</div>
+				</div>
+				<div class="col-6 col-md-3 mb-3">
+					<div class="card stats-card">
+						<div class="card-body text-center">
+							<i class="bi bi-play-circle" style="font-size: 1.5rem;"></i>
+							<h4 class="mt-2 mb-1">Video</h4>
+							<h2 id="video-status" class="mb-0">-</h2>
+						</div>
+					</div>
+				</div>
+				<div class="col-6 col-md-3 mb-3">
+					<div class="card">
+						<div class="card-body text-center">
+							<button class="btn btn-outline-primary w-100" onclick="showTestBannersModal()">
+								<i class="bi bi-gear"></i> <span class="d-none d-sm-inline">Test Banners</span>
+								<span class="d-inline d-sm-none">Test</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Tabs -->
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="nav-item">
+					<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#banners" type="button">
+						<i class="bi bi-images"></i> Quản lý Banner
+					</button>
+				</li>
+				<li class="nav-item">
+					<button class="nav-link" data-bs-toggle="tab" data-bs-target="#video" type="button">
+						<i class="bi bi-play-circle"></i> Quản lý Video
+					</button>
+				</li>
+				<li class="nav-item">
+					<button class="nav-link" data-bs-toggle="tab" data-bs-target="#socials" type="button">
+						<i class="bi bi-share"></i> Quản lý Social
+					</button>
+				</li>
+				<li class="nav-item">
+					<button class="nav-link" data-bs-toggle="tab" data-bs-target="#popup" type="button">
+						<i class="bi bi-window"></i> Quản lý Popup
+					</button>
+				</li>
+			</ul>
+
+			<!-- Tab Content -->
+			<div class="tab-content mt-4">
+				<!-- Banner Management -->
+				<div class="tab-pane fade show active" id="banners">
+					<div class="row">
+						<!-- Banner 1 -->
+						<div class="col-lg-6">
+							<div class="card">
+								<div class="card-header d-flex justify-content-between align-items-center">
+									<h5 class="mb-0"><i class="bi bi-image"></i> Banner 1</h5>
+									<button class="btn btn-success btn-sm" onclick="showAddBannerModal('banner1')">
+										<i class="bi bi-plus-circle"></i> Thêm mới
+									</button>
+								</div>
+								<div class="card-body">
+									<div id="banner1-list">
+										<div class="text-center py-4">
+											<div class="loading-spinner"></div>
+											<p class="mt-2 text-white">Đang tải...</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Banner 2 -->
+						<div class="col-lg-6">
+							<div class="card">
+								<div class="card-header d-flex justify-content-between align-items-center">
+									<h5 class="mb-0"><i class="bi bi-image"></i> Banner 2</h5>
+									<button class="btn btn-success btn-sm" onclick="showAddBannerModal('banner2')">
+										<i class="bi bi-plus-circle"></i> Thêm mới
+									</button>
+								</div>
+								<div class="card-body">
+									<div id="banner2-list">
+										<div class="text-center py-4">
+											<div class="loading-spinner"></div>
+											<p class="mt-2 text-white">Đang tải...</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Video Management -->
+				<div class="tab-pane fade" id="video">
+					<div class="row">
+						<div class="col-lg-8">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="mb-0"><i class="bi bi-play-circle"></i> Video YouTube</h5>
+								</div>
+								<div class="card-body">
+									<div class="mb-3">
+										<label for="youtube-url" class="form-label">
+											<i class="bi bi-youtube"></i> YouTube URL
+										</label>
+										<input type="url" class="form-control" id="youtube-url"
+											placeholder="https://www.youtube.com/watch?v=VIDEO_ID">
+									</div>
+									<div class="d-flex gap-2">
+										<button onclick="updateVideo()" class="btn btn-success">
+											<i class="bi bi-check-circle"></i> Cập nhật Video
+										</button>
+										<button onclick="deleteVideo()" class="btn btn-danger">
+											<i class="bi bi-trash"></i> Xóa Video
+										</button>
+									</div>
+									<div id="video-preview" class="mt-4"></div>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="card">
+								<div class="card-header">
+									<h6 class="mb-0"><i class="bi bi-info-circle"></i> Hướng dẫn</h6>
+								</div>
+								<div class="card-body">
+									<ul class="list-unstyled">
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Chỉ hỗ trợ YouTube URL
+										</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Video sẽ được embed tự
+											động</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Lưu trữ trong Redis:
+											video_frame</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Không có TTL (vĩnh
+											viễn)</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane fade" id="socials">
+					<div class="row">
+						<div class="col-lg-8">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="mb-0"><i class="bi bi-share"></i> Quản lý Social Links</h5>
+								</div>
+								<div class="card-body">
+									<form id="socials-form">
+										<div class="mb-3">
+											<label class="form-label">
+												<i class="bi bi-telephone"></i> Zalo
+											</label>
+											<input type="text" class="form-control" id="zalo-link" placeholder="tel:0865355604">
+											<div class="form-text">Nhập số điện thoại hoặc link Zalo</div>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">
+												<i class="bi bi-facebook"></i> Facebook
+											</label>
+											<input type="url" class="form-control" id="facebook-link" placeholder="https://facebook.com/...">
+											<div class="form-text">Nhập link Facebook</div>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">
+												<i class="bi bi-tiktok"></i> TikTok
+											</label>
+											<input type="url" class="form-control" id="tiktok-link" placeholder="https://tiktok.com/@...">
+											<div class="form-text">Nhập link TikTok</div>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">
+												<i class="bi bi-telegram"></i> Telegram
+											</label>
+											<input type="url" class="form-control" id="telegram-link" placeholder="https://t.me/...">
+											<div class="form-text">Nhập link Telegram</div>
+										</div>
+										<button type="submit" class="btn btn-success">
+											<i class="bi bi-check-circle"></i> Cập nhật Social Links
+										</button>
+									</form>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="card">
+								<div class="card-header">
+									<h6 class="mb-0"><i class="bi bi-info-circle"></i> Hướng dẫn</h6>
+								</div>
+								<div class="card-body">
+									<ul class="list-unstyled">
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Zalo: Sử dụng tel: cho
+											số điện thoại</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Facebook: Link trang
+											cá nhân hoặc fanpage</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> TikTok: Link profile
+											TikTok</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Telegram: Link channel
+											hoặc username</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Lưu trữ trong Redis:
+											socials</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Không có TTL (vĩnh
+											viễn)</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Popup Management -->
+				<div class="tab-pane fade" id="popup">
+					<div class="row">
+						<div class="col-lg-8">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="mb-0"><i class="bi bi-window"></i> Quản lý Popup</h5>
+								</div>
+								<div class="card-body">
+									<form id="popup-form">
+										<div class="mb-3">
+											<label for="popup-image-url" class="form-label">
+												<i class="bi bi-image"></i> Image URL
+											</label>
+											<input type="url" class="form-control" id="popup-image-url"
+												placeholder="https://example.com/popup-image.jpg" required>
+											<div class="form-text">Nhập URL hình ảnh popup</div>
+										</div>
+										<div class="mb-3">
+											<label for="popup-link-url" class="form-label">
+												<i class="bi bi-link-45deg"></i> Link URL
+											</label>
+											<input type="url" class="form-control" id="popup-link-url"
+												placeholder="https://example.com/promotion" required>
+											<div class="form-text">Nhập URL đích khi click vào popup</div>
+										</div>
+
+										<!-- Image Preview -->
+										<div class="mb-3" id="popup-image-preview-container" style="display: none;">
+											<label class="form-label">Preview:</label>
+											<div class="text-center">
+												<img id="popup-image-preview" class="img-fluid rounded" style="max-height: 200px;">
+											</div>
+										</div>
+
+										<div class="d-flex gap-2">
+											<button type="submit" class="btn btn-success">
+												<i class="bi bi-check-circle"></i> Cập nhật Popup
+											</button>
+											<button type="button" class="btn btn-danger" onclick="deletePopup()">
+												<i class="bi bi-trash"></i> Xóa Popup
+											</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="card">
+								<div class="card-header">
+									<h6 class="mb-0"><i class="bi bi-info-circle"></i> Hướng dẫn</h6>
+								</div>
+								<div class="card-body">
+									<ul class="list-unstyled">
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Popup hiển thị tự động
+											từ dưới màn hình</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Sau khi đóng, popup
+											xuất hiện lại sau 3 phút</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Timer được lưu trong
+											localStorage</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Lưu trữ trong Redis:
+											popup</li>
+										<li class="mb-2"><i class="bi bi-check text-success"></i> Không có TTL (vĩnh
+											viễn)</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Social Management -->
+
+	</div>
+	</div>
+
+	<!-- Add/Edit Banner Modal -->
+	<div class="modal fade" id="bannerModal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title text-gold">
+						<i class="bi bi-image"></i> <span id="modal-title">Thêm Banner</span>
+					</h5>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<form id="bannerForm">
+						<input type="hidden" id="banner-id">
+						<input type="hidden" id="banner-type">
+
+						<div class="mb-3">
+							<label for="banner-image-url" class="form-label">
+								<i class="bi bi-image"></i> Image URL
+							</label>
+							<input type="url" class="form-control" id="banner-image-url" placeholder="https://example.com/image.jpg"
+								required>
+							<div class="form-text text-white">Nhập URL hình ảnh banner</div>
+						</div>
+
+						<div class="mb-3">
+							<label for="banner-link-url" class="form-label">
+								<i class="bi bi-link-45deg"></i> Link URL
+							</label>
+							<input type="url" class="form-control" id="banner-link-url" placeholder="https://example.com/link"
+								required>
+							<div class="form-text text-white">Nhập URL đích khi click vào banner</div>
+						</div>
+
+						<!-- Image Preview -->
+						<div class="mb-3" id="image-preview-container" style="display: none;">
+							<label class="form-label">Preview:</label>
+							<div class="text-center">
+								<img id="image-preview" class="img-fluid rounded" style="max-height: 200px;">
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+						<i class="bi bi-x-circle"></i> Hủy
+					</button>
+					<button type="button" class="btn btn-primary" id="save-banner-btn">
+						<i class="bi bi-check-circle"></i> <span id="save-btn-text">Lưu</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Test Banners Modal -->
+	<div class="modal fade" id="testBannersModal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title text-gold">
+						<i class="bi bi-gear"></i> Thêm Banner Test
+					</h5>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<p class="text-white">Bạn có muốn thêm banner test với hình ảnh mẫu không?</p>
+					<div class="text-center">
+						<img
+							src="https://images.unsplash.com/photo-1753561881904-37dee26b7a2d?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+							class="img-fluid rounded" style="max-height: 200px;">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+					<button type="button" class="btn btn-primary" onclick="addTestBanners()">
+						<i class="bi bi-plus-circle"></i> Thêm Test Banners
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Bootstrap JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+		let sessionId = localStorage.getItem('admin_session_id');
+		let currentUser = null;
+		let bannerModal;
+		let testBannersModal;
+
+		// Initialize app
+		document.addEventListener('DOMContentLoaded', () => {
+			bannerModal = new bootstrap.Modal(document.getElementById('bannerModal'));
+			testBannersModal = new bootstrap.Modal(document.getElementById('testBannersModal'));
+
+			// Mobile-specific optimizations
+			setupMobileOptimizations();
+
+			if (sessionId) {
+				checkSession();
+			}
+			setupEventListeners();
+		});
+
+		function setupMobileOptimizations() {
+			// Prevent zoom on input focus for iOS
+			const inputs = document.querySelectorAll('input, textarea, select');
+			inputs.forEach(input => {
+				input.addEventListener('focus', () => {
+					if (window.innerWidth <= 768) {
+						input.style.fontSize = '16px';
+					}
+				});
+
+				input.addEventListener('blur', () => {
+					if (window.innerWidth <= 768) {
+						input.style.fontSize = '';
+					}
+				});
+			});
+
+			// Add touch feedback
+			const touchElements = document.querySelectorAll('.btn, .nav-link, .dropdown-item');
+			touchElements.forEach(element => {
+				element.addEventListener('touchstart', function () {
+					this.style.transform = 'scale(0.95)';
+				});
+
+				element.addEventListener('touchend', function () {
+					this.style.transform = '';
+				});
+			});
+
+			// Improve modal handling on mobile
+			const modals = document.querySelectorAll('.modal');
+			modals.forEach(modal => {
+				modal.addEventListener('show.bs.modal', function () {
+					document.body.style.overflow = 'hidden';
+				});
+
+				modal.addEventListener('hidden.bs.modal', function () {
+					document.body.style.overflow = '';
+				});
+			});
+		}
+
+		function setupEventListeners() {
+			// Login form
+			document.getElementById('login-form').addEventListener('submit', handleLogin);
+
+			// Logout button
+			document.getElementById('logout-btn').addEventListener('click', handleLogout);
+
+			// Save banner button
+			document.getElementById('save-banner-btn').addEventListener('click', saveBanner);
+
+			// Image URL input for preview
+			document.getElementById('banner-image-url').addEventListener('input', showImagePreview);
+
+			// Social links form
+			document.getElementById('socials-form').addEventListener('submit', handleSocialsSubmit);
+
+			// Popup form
+			document.getElementById('popup-form').addEventListener('submit', handlePopupSubmit);
+
+			// Popup image preview
+			document.getElementById('popup-image-url').addEventListener('input', showPopupImagePreview);
+		}
+
+		function showImagePreview() {
+			const imageUrl = document.getElementById('banner-image-url').value;
+			const previewContainer = document.getElementById('image-preview-container');
+			const previewImg = document.getElementById('image-preview');
+
+			if (imageUrl) {
+				previewImg.src = imageUrl;
+				previewContainer.style.display = 'block';
+			} else {
+				previewContainer.style.display = 'none';
+			}
+		}
+
+		function showPopupImagePreview() {
+			const imageUrl = document.getElementById('popup-image-url').value;
+			const previewContainer = document.getElementById('popup-image-preview-container');
+			const previewImg = document.getElementById('popup-image-preview');
+
+			if (imageUrl) {
+				previewImg.src = imageUrl;
+				previewContainer.style.display = 'block';
+			} else {
+				previewContainer.style.display = 'none';
+			}
+		}
+
+		function showAddBannerModal(type) {
+			document.getElementById('modal-title').textContent = `Thêm ${type === 'banner1' ? 'Banner 1' : 'Banner 2'}`;
+			document.getElementById('save-btn-text').textContent = 'Thêm';
+			document.getElementById('banner-id').value = '';
+			document.getElementById('banner-type').value = type;
+			document.getElementById('banner-image-url').value = '';
+			document.getElementById('banner-link-url').value = '';
+			document.getElementById('image-preview-container').style.display = 'none';
+			bannerModal.show();
+		}
+
+		function showEditBannerModal(type, banner) {
+			document.getElementById('modal-title').textContent = `Sửa ${type === 'banner1' ? 'Banner 1' : 'Banner 2'}`;
+			document.getElementById('save-btn-text').textContent = 'Cập nhật';
+			document.getElementById('banner-id').value = banner.id;
+			document.getElementById('banner-type').value = type;
+			document.getElementById('banner-image-url').value = banner.image_url;
+			document.getElementById('banner-link-url').value = banner.link_href;
+
+			// Show preview
+			const previewImg = document.getElementById('image-preview');
+			previewImg.src = banner.image_url;
+			document.getElementById('image-preview-container').style.display = 'block';
+
+			bannerModal.show();
+		}
+
+		function showTestBannersModal() {
+			testBannersModal.show();
+		}
+
+		async function addTestBanners() {
+			const testImageUrl = 'https://images.unsplash.com/photo-1753561881904-37dee26b7a2d?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+
+			try {
+				// Add to banner1
+				await saveBannerToServer('banner1', testImageUrl, 'https://example.com/banner1');
+				// Add to banner2  
+				await saveBannerToServer('banner2', testImageUrl, 'https://example.com/banner2');
+
+				showAlert('✅ Đã thêm test banners thành công!', 'success');
+				testBannersModal.hide();
+				loadBanners();
+			} catch (error) {
+				showAlert('❌ Lỗi khi thêm test banners: ' + error.message, 'danger');
+			}
+		}
+
+		async function saveBanner() {
+			const bannerId = document.getElementById('banner-id').value;
+			const bannerType = document.getElementById('banner-type').value;
+			const imageUrl = document.getElementById('banner-image-url').value;
+			const linkUrl = document.getElementById('banner-link-url').value;
+
+			if (!imageUrl || !linkUrl) {
+				showAlert('❌ Vui lòng nhập đầy đủ thông tin', 'danger');
+				return;
+			}
+
+			try {
+				if (bannerId) {
+					// Update existing banner
+					await updateBannerOnServer(bannerType, bannerId, imageUrl, linkUrl);
+				} else {
+					// Add new banner
+					await saveBannerToServer(bannerType, imageUrl, linkUrl);
+				}
+
+				bannerModal.hide();
+				loadBanners();
+			} catch (error) {
+				showAlert('❌ Lỗi: ' + error.message, 'danger');
+			}
+		}
+
+		async function saveBannerToServer(type, imageUrl, linkUrl) {
+			const response = await fetch(`/api/admin/banners/${type}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${sessionId}`
+				},
+				body: JSON.stringify({
+					image_url: imageUrl,
+					link_href: linkUrl
+				})
+			});
+
+			const data = await response.json();
+			if (!data.success) {
+				throw new Error(data.error);
+			}
+
+			showAlert('✅ ' + data.message, 'success');
+			return data;
+		}
+
+		async function updateBannerOnServer(type, id, imageUrl, linkUrl) {
+			const response = await fetch(`/api/admin/banners/${type}/${id}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${sessionId}`
+				},
+				body: JSON.stringify({
+					image_url: imageUrl,
+					link_href: linkUrl
+				})
+			});
+
+			const data = await response.json();
+			if (!data.success) {
+				throw new Error(data.error);
+			}
+
+			showAlert('✅ ' + data.message, 'success');
+			return data;
+		}
+
+		async function deleteBanner(type, id) {
+			if (!confirm('❓ Bạn có chắc muốn xóa banner này?')) {
+				return;
+			}
+
+			try {
+				const response = await fetch(`/api/admin/banners/${type}/${id}`, {
+					method: 'DELETE',
+					headers: {
+						'Authorization': `Bearer ${sessionId}`
+					}
+				});
+
+				const data = await response.json();
+				if (data.success) {
+					showAlert('✅ ' + data.message, 'success');
+					loadBanners();
+				} else {
+					showAlert('❌ ' + data.error, 'danger');
+				}
+			} catch (error) {
+				showAlert('❌ Lỗi kết nối server', 'danger');
+			}
+		}
+
+		// Social Links Management
+		async function handleSocialsSubmit(e) {
+			e.preventDefault();
+
+			const zaloLink = document.getElementById('zalo-link').value;
+			const facebookLink = document.getElementById('facebook-link').value;
+			const tiktokLink = document.getElementById('tiktok-link').value;
+			const telegramLink = document.getElementById('telegram-link').value;
+
+			const socials = [];
+
+			if (zaloLink) socials.push({ type: 'zalo', link: zaloLink });
+			if (facebookLink) socials.push({ type: 'facebook', link: facebookLink });
+			if (tiktokLink) socials.push({ type: 'tiktok', link: tiktokLink });
+			if (telegramLink) socials.push({ type: 'telegram', link: telegramLink });
+
+			try {
+				const response = await fetch('/api/admin/socials', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${sessionId}`
+					},
+					body: JSON.stringify({ socials })
+				});
+
+				const data = await response.json();
+				if (data.success) {
+					showAlert('✅ ' + data.message, 'success');
+				} else {
+					showAlert('❌ ' + data.error, 'danger');
+				}
+			} catch (error) {
+				showAlert('❌ Lỗi kết nối server', 'danger');
+			}
+		}
+
+		// Popup Management
+		async function handlePopupSubmit(e) {
+			e.preventDefault();
+
+			const imageUrl = document.getElementById('popup-image-url').value;
+			const linkUrl = document.getElementById('popup-link-url').value;
+
+			if (!imageUrl || !linkUrl) {
+				showAlert('❌ Vui lòng nhập đầy đủ thông tin', 'danger');
+				return;
+			}
+
+			try {
+				const response = await fetch('/api/admin/popup', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${sessionId}`
+					},
+					body: JSON.stringify({
+						image_url: imageUrl,
+						link_url: linkUrl
+					})
+				});
+
+				const data = await response.json();
+				if (data.success) {
+					showAlert('✅ ' + data.message, 'success');
+				} else {
+					showAlert('❌ ' + data.error, 'danger');
+				}
+			} catch (error) {
+				showAlert('❌ Lỗi kết nối server', 'danger');
+			}
+		}
+
+		async function deletePopup() {
+			if (!confirm('❓ Bạn có chắc muốn xóa popup này?')) {
+				return;
+			}
+
+			try {
+				const response = await fetch('/api/admin/popup', {
+					method: 'DELETE',
+					headers: {
+						'Authorization': `Bearer ${sessionId}`
+					}
+				});
+
+				const data = await response.json();
+				if (data.success) {
+					showAlert('✅ ' + data.message, 'success');
+					document.getElementById('popup-image-url').value = '';
+					document.getElementById('popup-link-url').value = '';
+					document.getElementById('popup-image-preview-container').style.display = 'none';
+				} else {
+					showAlert('❌ ' + data.error, 'danger');
+				}
+			} catch (error) {
+				showAlert('❌ Lỗi kết nối server', 'danger');
+			}
+		}
+
+		async function handleLogin(e) {
+			e.preventDefault();
+
+			const username = document.getElementById('username').value;
+			const password = document.getElementById('password').value;
+
+			try {
+				const response = await fetch('/api/admin/login', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ username, password })
+				});
+
+				const data = await response.json();
+
+				if (data.success) {
+					sessionId = data.sessionId;
+					localStorage.setItem('admin_session_id', sessionId);
+					showLoginSuccess(data.message);
+					showAdminPanel();
+					loadData();
+				} else {
+					showLoginError(data.error);
+				}
+			} catch (error) {
+				showLoginError('Lỗi kết nối server');
+			}
+		}
+
+		async function handleLogout() {
+			try {
+				await fetch('/api/admin/logout', {
+					method: 'POST',
+					headers: {
+						'Authorization': `Bearer ${sessionId}`
+					}
+				});
+			} catch (error) {
+				console.error('Logout error:', error);
+			}
+
+			sessionId = null;
+			localStorage.removeItem('admin_session_id');
+			showLoginSection();
+		}
+
+		async function checkSession() {
+			try {
+				const response = await fetch('/api/admin/check', {
+					headers: {
+						'Authorization': `Bearer ${sessionId}`
+					}
+				});
+
+				if (response.ok) {
+					const data = await response.json();
+					currentUser = data.session;
+					showAdminPanel();
+					loadData();
+				} else {
+					sessionId = null;
+					localStorage.removeItem('admin_session_id');
+					showLoginSection();
+				}
+			} catch (error) {
+				console.error('Session check error:', error);
+				showLoginSection();
+			}
+		}
+
+		function showLoginSection() {
+			document.getElementById('login-section').classList.remove('d-none');
+			document.getElementById('admin-panel').classList.add('d-none');
+		}
+
+		function showAdminPanel() {
+			document.getElementById('login-section').classList.add('d-none');
+			document.getElementById('admin-panel').classList.remove('d-none');
+
+			if (currentUser) {
+				document.getElementById('user-name').textContent = currentUser.username;
+				document.getElementById('login-time').textContent = new Date(currentUser.loginTime).toLocaleString('vi-VN');
+			}
+		}
+
+		async function loadData() {
+			await loadBanners();
+			await loadVideo();
+			await loadSocials();
+			await loadPopup();
+		}
+
+		async function loadBanners() {
+			try {
+				const response = await fetch('/api/admin/banners', {
+					headers: {
+						'Authorization': `Bearer ${sessionId}`
+					}
+				});
+
+				if (response.ok) {
+					const data = await response.json();
+					renderBanners('banner1', data.banners.banner1);
+					renderBanners('banner2', data.banners.banner2);
+
+					// Update stats
+					document.getElementById('banner1-count').textContent = data.banners.banner1.length;
+					document.getElementById('banner2-count').textContent = data.banners.banner2.length;
+				}
+			} catch (error) {
+				console.error('Load banners error:', error);
+			}
+		}
+
+		async function loadVideo() {
+			try {
+				const response = await fetch('/api/video');
+
+				if (response.ok) {
+					const data = await response.json();
+					renderVideo(data.video);
+					document.getElementById('video-status').textContent = data.video ? '✓' : '✗';
+				} else {
+					renderVideo(null);
+					document.getElementById('video-status').textContent = '✗';
+				}
+			} catch (error) {
+				console.error('Load video error:', error);
+				renderVideo(null);
+				document.getElementById('video-status').textContent = '✗';
+			}
+		}
+
+		async function loadSocials() {
+			try {
+				const response = await fetch('/api/admin/socials', {
+					headers: {
+						'Authorization': `Bearer ${sessionId}`
+					}
+				});
+
+				if (response.ok) {
+					const data = await response.json();
+					renderSocials(data.socials);
+				}
+			} catch (error) {
+				console.error('Load socials error:', error);
+			}
+		}
+
+		async function loadPopup() {
+			try {
+				const response = await fetch('/api/admin/popup', {
+					headers: {
+						'Authorization': `Bearer ${sessionId}`
+					}
+				});
+
+				if (response.ok) {
+					const data = await response.json();
+					renderPopup(data.popup);
+				}
+			} catch (error) {
+				console.error('Load popup error:', error);
+			}
+		}
+
+		function renderBanners(type, banners) {
+			const container = document.getElementById(`${type}-list`);
+			container.innerHTML = '';
+
+			if (banners.length === 0) {
+				container.innerHTML = `
+                    <div class="text-center py-4 text-white">
+                        <i class="bi bi-image text-white" style="font-size: 3rem; opacity: 0.3;"></i>
+                        <p class="mt-2 text-white">Chưa có banner nào</p>
+                    </div>
+                `;
+				return;
+			}
+
+			banners.forEach(banner => {
+				const bannerElement = document.createElement('div');
+				bannerElement.className = 'banner-item';
+
+				// Mobile-optimized layout
+				const isMobile = window.innerWidth <= 768;
+				const imageCol = isMobile ? 'col-3' : 'col-4';
+				const contentCol = isMobile ? 'col-9' : 'col-8';
+				const imageHeight = isMobile ? '60px' : '80px';
+				const buttonSize = isMobile ? 'btn-xs' : 'btn-sm';
+
+				bannerElement.innerHTML = `
+                    <div class="row align-items-center">
+                        <div class="${imageCol}">
+                            <img src="${banner.image_url}" alt="Banner" class="img-fluid rounded" 
+                                 style="max-height: ${imageHeight}; object-fit: cover; width: 100%;" 
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzMzMyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVycm9yPC90ZXh0Pjwvc3ZnPg=='">
+                        </div>
+                        <div class="${contentCol}">
+                            <div class="mb-2">
+                                <strong class="text-white">Link:</strong> 
+                                <a href="${banner.link_href}" target="_blank" class="text-gold text-break" style="word-break: break-all;">
+                                    ${banner.link_href.length > 30 ? banner.link_href.substring(0, 30) + '...' : banner.link_href}
+                                </a>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-white">Tạo lúc: ${new Date(banner.created_at).toLocaleString('vi-VN')}</small>
+                            </div>
+                            <div class="d-flex gap-1 flex-wrap">
+                                <button onclick="showEditBannerModal('${type}', ${JSON.stringify(banner).replace(/"/g, '&quot;')})" class="btn btn-primary ${buttonSize}">
+                                    <i class="bi bi-pencil"></i> ${isMobile ? '' : 'Sửa'}
+                                </button>
+                                <button onclick="deleteBanner('${type}', '${banner.id}')" class="btn btn-danger ${buttonSize}">
+                                    <i class="bi bi-trash"></i> ${isMobile ? '' : 'Xóa'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+				container.appendChild(bannerElement);
+			});
+		}
+
+		function renderVideo(video) {
+			const container = document.getElementById('video-preview');
+
+			if (video && video.youtube_url) {
+				document.getElementById('youtube-url').value = video.youtube_url;
+				container.innerHTML = `
+                    <div class="card bg-dark">
+                        <div class="card-body">
+                            <iframe src="${video.embed_url}" 
+                                    class="w-100 rounded" 
+                                    height="300"
+                                    frameborder="0" 
+                                    allowfullscreen>
+                            </iframe>
+                            <div class="mt-3 text-white">
+                                <p class="text-white"><strong class="text-white">YouTube URL:</strong> <a href="${video.youtube_url}" target="_blank" class="text-gold">${video.youtube_url}</a></p>
+                                <p class="text-white"><small class="text-white">Cập nhật lúc: ${new Date(video.updated_at).toLocaleString('vi-VN')}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+			} else {
+				document.getElementById('youtube-url').value = '';
+				container.innerHTML = `
+                    <div class="text-center py-4 text-white">
+                        <i class="bi bi-play-circle text-white" style="font-size: 3rem; opacity: 0.3;"></i>
+                        <p class="mt-2 text-white">Chưa có video nào được thiết lập</p>
+                    </div>
+                `;
+			}
+		}
+
+		function renderSocials(socials) {
+			// Clear form
+			document.getElementById('zalo-link').value = '';
+			document.getElementById('facebook-link').value = '';
+			document.getElementById('tiktok-link').value = '';
+			document.getElementById('telegram-link').value = '';
+
+			// Fill form with existing data
+			socials.forEach(social => {
+				switch (social.type) {
+					case 'zalo':
+						document.getElementById('zalo-link').value = social.link;
+						break;
+					case 'facebook':
+						document.getElementById('facebook-link').value = social.link;
+						break;
+					case 'tiktok':
+						document.getElementById('tiktok-link').value = social.link;
+						break;
+					case 'telegram':
+						document.getElementById('telegram-link').value = social.link;
+						break;
+				}
+			});
+		}
+
+		function renderPopup(popup) {
+			if (popup) {
+				document.getElementById('popup-image-url').value = popup.image_url;
+				document.getElementById('popup-link-url').value = popup.link_url;
+
+				// Show preview
+				const previewImg = document.getElementById('popup-image-preview');
+				previewImg.src = popup.image_url;
+				document.getElementById('popup-image-preview-container').style.display = 'block';
+			} else {
+				document.getElementById('popup-image-url').value = '';
+				document.getElementById('popup-link-url').value = '';
+				document.getElementById('popup-image-preview-container').style.display = 'none';
+			}
+		}
+
+		async function updateVideo() {
+			const youtubeUrl = document.getElementById('youtube-url').value;
+
+			if (!youtubeUrl) {
+				showAlert('❌ Vui lòng nhập YouTube URL', 'danger');
+				return;
+			}
+
+			try {
+				const response = await fetch('/api/admin/video', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${sessionId}`
+					},
+					body: JSON.stringify({
+						youtube_url: youtubeUrl
+					})
+				});
+
+				const data = await response.json();
+
+				if (data.success) {
+					showAlert('✅ ' + data.message, 'success');
+					loadVideo();
+				} else {
+					showAlert('❌ ' + data.error, 'danger');
+				}
+			} catch (error) {
+				showAlert('❌ Lỗi kết nối server', 'danger');
+			}
+		}
+
+		async function deleteVideo() {
+			if (!confirm('❓ Bạn có chắc muốn xóa video này?')) {
+				return;
+			}
+
+			try {
+				const response = await fetch('/api/admin/video', {
+					method: 'DELETE',
+					headers: {
+						'Authorization': `Bearer ${sessionId}`
+					}
+				});
+
+				const data = await response.json();
+
+				if (data.success) {
+					showAlert('✅ ' + data.message, 'success');
+					document.getElementById('youtube-url').value = '';
+					loadVideo();
+				} else {
+					showAlert('❌ ' + data.error, 'danger');
+				}
+			} catch (error) {
+				showAlert('❌ Lỗi kết nối server', 'danger');
+			}
+		}
+
+		function showAlert(message, type) {
+			const alertContainer = document.getElementById('admin-alert');
+			alertContainer.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+
+			setTimeout(() => {
+				alertContainer.innerHTML = '';
+			}, 5000);
+		}
+
+		function showLoginSuccess(message) {
+			const alertContainer = document.getElementById('login-alert');
+			alertContainer.innerHTML = `<div class="alert alert-success">${message}</div>`;
+		}
+
+		function showLoginError(message) {
+			const alertContainer = document.getElementById('login-alert');
+			alertContainer.innerHTML = `<div class="alert alert-danger">${message}</div>`;
+		}
+	</script>
+</body>
+
+</html>

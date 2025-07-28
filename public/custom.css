@@ -1,0 +1,130 @@
+/* Bootstrap Custom CSS cho LoL Esports */
+
+/* Additional Bootstrap utility classes */
+.text-warning {
+    color: var(--primary-gold) !important;
+}
+
+.bg-warning {
+    background-color: var(--primary-gold) !important;
+}
+
+/* Custom badge states */
+.badge-state-unstarted {
+    background-color: #6c757d !important;
+    color: #fff !important;
+}
+
+.badge-state-in-progress {
+    background-color: #0dcaf0 !important;
+    color: #000 !important;
+}
+
+.badge-state-completed {
+    background-color: #198754 !important;
+    color: #fff !important;
+}
+
+/* Team winner highlight */
+.team.winner {
+    background: rgba(200, 155, 60, 0.15) !important;
+    border-radius: 8px !important;
+    padding: 0.5rem !important;
+}
+
+/* Responsive improvements */
+@media (max-width: 576px) {
+    .event-card .row {
+        flex-direction: column;
+    }
+    
+    .event-card .col-2 {
+        order: -1;
+        margin-bottom: 0.5rem;
+    }
+    
+    .event-card .position-absolute {
+        position: static !important;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Swiper improvements for better mobile experience */
+@media (max-width: 768px) {
+    .swiper-button-next,
+    .swiper-button-prev {
+        display: none !important;
+    }
+    
+    .banner-image {
+        height: 150px !important;
+    }
+}
+
+/* Loading improvements */
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Enhanced card hover effects */
+.event-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(200, 155, 60, 0.15) !important;
+}
+
+/* Better spacing for content */
+.date-group:last-child {
+    margin-bottom: 2rem;
+}
+
+/* Improved banner positioning for desktop */
+@media (min-width: 992px) {
+    .banner-desktop .banner-swiper {
+        height: 400px;
+    }
+    
+    .banner-desktop .banner-image {
+        height: 400px;
+    }
+}
+
+/* Video responsive */
+.video-frame {
+    aspect-ratio: 16/9;
+    height: auto !important;
+}
+
+/* Better text contrast */
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Consistent button sizing */
+.btn {
+    min-height: 38px;
+}
+
+/* Fix for banner navigation on mobile */
+.swiper-pagination {
+    bottom: 10px !important;
+}
+
+/* Improved team logos */
+.team-logo, .league-logo {
+    object-fit: contain;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Score styling */
+.fs-4 {
+    font-size: 1.5rem !important;
+}
+
+/* Better spacing for small screens */
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+}
