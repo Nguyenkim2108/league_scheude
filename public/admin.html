@@ -374,12 +374,23 @@
 			border-radius: 50%;
 			border-top-color: var(--primary-gold);
 			animation: spin 1s ease-in-out infinite;
+			margin-right: 8px;
 		}
 
 		@keyframes spin {
 			to {
 				transform: rotate(360deg);
 			}
+		}
+
+		.btn:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+			transform: none !important;
+		}
+
+		.btn:disabled:hover {
+			transform: none !important;
 		}
 
 		/* Mobile-specific improvements */
@@ -771,12 +782,11 @@
 								<div class="card-body">
 									<form id="popup-form">
 										<div class="mb-3">
-											<label for="popup-image-url" class="form-label">
-												<i class="bi bi-image"></i> Image URL
+											<label for="popup-image-file" class="form-label">
+												<i class="bi bi-image"></i> Upload Image
 											</label>
-											<input type="url" class="form-control" id="popup-image-url"
-												placeholder="https://example.com/popup-image.jpg" required>
-											<div class="form-text">Nhập URL hình ảnh popup</div>
+											<input type="file" class="form-control" id="popup-image-file" accept="image/*" required>
+											<div class="form-text">Chọn hình ảnh popup từ máy tính</div>
 										</div>
 										<div class="mb-3">
 											<label for="popup-link-url" class="form-label">
@@ -854,12 +864,11 @@
 						<input type="hidden" id="banner-type">
 
 						<div class="mb-3">
-							<label for="banner-image-url" class="form-label">
-								<i class="bi bi-image"></i> Image URL
+							<label for="banner-image-file" class="form-label">
+								<i class="bi bi-image"></i> Upload Image
 							</label>
-							<input type="url" class="form-control" id="banner-image-url" placeholder="https://example.com/image.jpg"
-								required>
-							<div class="form-text text-white">Nhập URL hình ảnh banner</div>
+							<input type="file" class="form-control" id="banner-image-file" accept="image/*" required>
+							<div class="form-text text-white">Chọn hình ảnh banner từ máy tính</div>
 						</div>
 
 						<div class="mb-3">
@@ -903,11 +912,12 @@
 					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
 				</div>
 				<div class="modal-body">
-					<p class="text-white">Bạn có muốn thêm banner test với hình ảnh mẫu không?</p>
+					<p class="text-white">Bạn có muốn thêm banner test với hình ảnh được tạo tự động không?</p>
 					<div class="text-center">
-						<img
-							src="https://images.unsplash.com/photo-1753561881904-37dee26b7a2d?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-							class="img-fluid rounded" style="max-height: 200px;">
+						<div class="bg-gradient rounded p-3" style="background: linear-gradient(135deg, #C89B3C, #A17A2B);">
+							<h4 class="text-white mb-0">Test Banner Preview</h4>
+							<p class="text-white mb-0">800x400px - Gradient Background</p>
+						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -928,6 +938,10 @@
 		let currentUser = null;
 		let bannerModal;
 		let testBannersModal;
+		const config = {
+			"VITE_CLOUD_UPLOAD_PRESET": "system_uploader_1e2ddab171f769b9_c97ed1d96a893577a0b592cca459f715df",
+			"VITE_CLOUD_NAME": "drhpxgfnn"
+		};
 
 		// Initialize app
 		document.addEventListener('DOMContentLoaded', () => {
@@ -942,6 +956,19 @@
 			}
 			setupEventListeners();
 		});
+
+		const uploadImage = async (formData) => {
+			formData.append("upload_preset", config.VITE_CLOUD_UPLOAD_PRESET);
+			const response = await fetch(
+				`https://api.cloudinary.com/v1_1/${config.VITE_CLOUD_NAME}/image/upload`,
+				{
+					method: 'POST',
+					body: formData
+				},
+			);
+			const data = await response.json();
+			return data.secure_url;
+		};
 
 		function setupMobileOptimizations() {
 			// Prevent zoom on input focus for iOS
@@ -995,8 +1022,8 @@
 			// Save banner button
 			document.getElementById('save-banner-btn').addEventListener('click', saveBanner);
 
-			// Image URL input for preview
-			document.getElementById('banner-image-url').addEventListener('input', showImagePreview);
+			// Image file input for preview
+			document.getElementById('banner-image-file').addEventListener('change', showImagePreview);
 
 			// Social links form
 			document.getElementById('socials-form').addEventListener('submit', handleSocialsSubmit);
@@ -1005,30 +1032,40 @@
 			document.getElementById('popup-form').addEventListener('submit', handlePopupSubmit);
 
 			// Popup image preview
-			document.getElementById('popup-image-url').addEventListener('input', showPopupImagePreview);
+			document.getElementById('popup-image-file').addEventListener('change', showPopupImagePreview);
 		}
 
 		function showImagePreview() {
-			const imageUrl = document.getElementById('banner-image-url').value;
+			const fileInput = document.getElementById('banner-image-file');
 			const previewContainer = document.getElementById('image-preview-container');
 			const previewImg = document.getElementById('image-preview');
 
-			if (imageUrl) {
-				previewImg.src = imageUrl;
-				previewContainer.style.display = 'block';
+			if (fileInput.files && fileInput.files[0]) {
+				const file = fileInput.files[0];
+				const reader = new FileReader();
+				reader.onload = function(e) {
+					previewImg.src = e.target.result;
+					previewContainer.style.display = 'block';
+				};
+				reader.readAsDataURL(file);
 			} else {
 				previewContainer.style.display = 'none';
 			}
 		}
 
 		function showPopupImagePreview() {
-			const imageUrl = document.getElementById('popup-image-url').value;
+			const fileInput = document.getElementById('popup-image-file');
 			const previewContainer = document.getElementById('popup-image-preview-container');
 			const previewImg = document.getElementById('popup-image-preview');
 
-			if (imageUrl) {
-				previewImg.src = imageUrl;
-				previewContainer.style.display = 'block';
+			if (fileInput.files && fileInput.files[0]) {
+				const file = fileInput.files[0];
+				const reader = new FileReader();
+				reader.onload = function(e) {
+					previewImg.src = e.target.result;
+					previewContainer.style.display = 'block';
+				};
+				reader.readAsDataURL(file);
 			} else {
 				previewContainer.style.display = 'none';
 			}
@@ -1039,7 +1076,7 @@
 			document.getElementById('save-btn-text').textContent = 'Thêm';
 			document.getElementById('banner-id').value = '';
 			document.getElementById('banner-type').value = type;
-			document.getElementById('banner-image-url').value = '';
+			document.getElementById('banner-image-file').value = '';
 			document.getElementById('banner-link-url').value = '';
 			document.getElementById('image-preview-container').style.display = 'none';
 			bannerModal.show();
@@ -1050,10 +1087,10 @@
 			document.getElementById('save-btn-text').textContent = 'Cập nhật';
 			document.getElementById('banner-id').value = banner.id;
 			document.getElementById('banner-type').value = type;
-			document.getElementById('banner-image-url').value = banner.image_url;
+			document.getElementById('banner-image-file').value = '';
 			document.getElementById('banner-link-url').value = banner.link_href;
 
-			// Show preview
+			// Show preview of existing image
 			const previewImg = document.getElementById('image-preview');
 			previewImg.src = banner.image_url;
 			document.getElementById('image-preview-container').style.display = 'block';
@@ -1066,34 +1103,106 @@
 		}
 
 		async function addTestBanners() {
-			const testImageUrl = 'https://images.unsplash.com/photo-1753561881904-37dee26b7a2d?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+			const addBtn = document.querySelector('#testBannersModal .btn-primary');
+			const cancelBtn = document.querySelector('#testBannersModal .btn-secondary');
+
+			// Set loading state
+			const originalText = addBtn.innerHTML;
+			addBtn.innerHTML = '<span class="loading-spinner"></span> Đang tạo...';
+			addBtn.disabled = true;
+			cancelBtn.disabled = true;
 
 			try {
-				// Add to banner1
-				await saveBannerToServer('banner1', testImageUrl, 'https://example.com/banner1');
-				// Add to banner2  
-				await saveBannerToServer('banner2', testImageUrl, 'https://example.com/banner2');
+				// Create a test image using Canvas API
+				const canvas = document.createElement('canvas');
+				canvas.width = 800;
+				canvas.height = 400;
+				const ctx = canvas.getContext('2d');
+				
+				// Create gradient background
+				const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+				gradient.addColorStop(0, '#C89B3C');
+				gradient.addColorStop(1, '#A17A2B');
+				ctx.fillStyle = gradient;
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+				
+				// Add text
+				ctx.fillStyle = '#FFFFFF';
+				ctx.font = 'bold 48px Arial';
+				ctx.textAlign = 'center';
+				ctx.fillText('Test Banner', canvas.width/2, canvas.height/2);
+				
+				// Convert to blob
+				canvas.toBlob(async (blob) => {
+					try {
+						// Upload test image
+						const formData = new FormData();
+						formData.append('file', blob, 'test-banner.png');
+						const testImageUrl = await uploadImage(formData);
+						
+						// Add to banner1
+						await saveBannerToServer('banner1', testImageUrl, 'https://example.com/banner1');
+						// Add to banner2  
+						await saveBannerToServer('banner2', testImageUrl, 'https://example.com/banner2');
 
-				showAlert('✅ Đã thêm test banners thành công!', 'success');
-				testBannersModal.hide();
-				loadBanners();
+						showAlert('✅ Đã thêm test banners thành công!', 'success');
+						testBannersModal.hide();
+						loadBanners();
+					} catch (error) {
+						showAlert('❌ Lỗi khi thêm test banners: ' + error.message, 'danger');
+					} finally {
+						// Reset loading state
+						addBtn.innerHTML = originalText;
+						addBtn.disabled = false;
+						cancelBtn.disabled = false;
+					}
+				}, 'image/png');
 			} catch (error) {
-				showAlert('❌ Lỗi khi thêm test banners: ' + error.message, 'danger');
+				showAlert('❌ Lỗi khi tạo test banners: ' + error.message, 'danger');
+				// Reset loading state
+				addBtn.innerHTML = originalText;
+				addBtn.disabled = false;
+				cancelBtn.disabled = false;
 			}
 		}
 
 		async function saveBanner() {
 			const bannerId = document.getElementById('banner-id').value;
 			const bannerType = document.getElementById('banner-type').value;
-			const imageUrl = document.getElementById('banner-image-url').value;
+			const fileInput = document.getElementById('banner-image-file');
 			const linkUrl = document.getElementById('banner-link-url').value;
+			const saveBtn = document.getElementById('save-banner-btn');
+			const cancelBtn = document.querySelector('#bannerModal .btn-secondary');
 
-			if (!imageUrl || !linkUrl) {
-				showAlert('❌ Vui lòng nhập đầy đủ thông tin', 'danger');
+			if (!linkUrl) {
+				showAlert('❌ Vui lòng nhập link URL', 'danger');
 				return;
 			}
 
+			// Set loading state
+			const originalText = saveBtn.innerHTML;
+			saveBtn.innerHTML = '<span class="loading-spinner"></span> Đang xử lý...';
+			saveBtn.disabled = true;
+			cancelBtn.disabled = true;
+
 			try {
+				let imageUrl = null;
+				
+				// If there's a new file selected, upload it
+				if (fileInput.files && fileInput.files[0]) {
+					const formData = new FormData();
+					formData.append('file', fileInput.files[0]);
+					imageUrl = await uploadImage(formData);
+				} else if (bannerId) {
+					// For editing, if no new file selected, keep existing image
+					// We'll need to get the existing image URL from the preview
+					const previewImg = document.getElementById('image-preview');
+					imageUrl = previewImg.src;
+				} else {
+					showAlert('❌ Vui lòng chọn hình ảnh', 'danger');
+					return;
+				}
+
 				if (bannerId) {
 					// Update existing banner
 					await updateBannerOnServer(bannerType, bannerId, imageUrl, linkUrl);
@@ -1106,6 +1215,11 @@
 				loadBanners();
 			} catch (error) {
 				showAlert('❌ Lỗi: ' + error.message, 'danger');
+			} finally {
+				// Reset loading state
+				saveBtn.innerHTML = originalText;
+				saveBtn.disabled = false;
+				cancelBtn.disabled = false;
 			}
 		}
 
@@ -1158,6 +1272,16 @@
 				return;
 			}
 
+			// Find the delete button that was clicked
+			const deleteBtn = event.target.closest('button');
+			const editBtn = deleteBtn.parentElement.querySelector('button[onclick*="showEditBannerModal"]');
+
+			// Set loading state
+			const originalText = deleteBtn.innerHTML;
+			deleteBtn.innerHTML = '<span class="loading-spinner"></span>';
+			deleteBtn.disabled = true;
+			if (editBtn) editBtn.disabled = true;
+
 			try {
 				const response = await fetch(`/api/admin/banners/${type}/${id}`, {
 					method: 'DELETE',
@@ -1175,6 +1299,11 @@
 				}
 			} catch (error) {
 				showAlert('❌ Lỗi kết nối server', 'danger');
+			} finally {
+				// Reset loading state
+				deleteBtn.innerHTML = originalText;
+				deleteBtn.disabled = false;
+				if (editBtn) editBtn.disabled = false;
 			}
 		}
 
@@ -1186,6 +1315,7 @@
 			const facebookLink = document.getElementById('facebook-link').value;
 			const tiktokLink = document.getElementById('tiktok-link').value;
 			const telegramLink = document.getElementById('telegram-link').value;
+			const submitBtn = e.target.querySelector('button[type="submit"]');
 
 			const socials = [];
 
@@ -1193,6 +1323,11 @@
 			if (facebookLink) socials.push({ type: 'facebook', link: facebookLink });
 			if (tiktokLink) socials.push({ type: 'tiktok', link: tiktokLink });
 			if (telegramLink) socials.push({ type: 'telegram', link: telegramLink });
+
+			// Set loading state
+			const originalText = submitBtn.innerHTML;
+			submitBtn.innerHTML = '<span class="loading-spinner"></span> Đang xử lý...';
+			submitBtn.disabled = true;
 
 			try {
 				const response = await fetch('/api/admin/socials', {
@@ -1212,6 +1347,10 @@
 				}
 			} catch (error) {
 				showAlert('❌ Lỗi kết nối server', 'danger');
+			} finally {
+				// Reset loading state
+				submitBtn.innerHTML = originalText;
+				submitBtn.disabled = false;
 			}
 		}
 
@@ -1219,15 +1358,33 @@
 		async function handlePopupSubmit(e) {
 			e.preventDefault();
 
-			const imageUrl = document.getElementById('popup-image-url').value;
+			const fileInput = document.getElementById('popup-image-file');
 			const linkUrl = document.getElementById('popup-link-url').value;
+			const submitBtn = e.target.querySelector('button[type="submit"]');
+			const deleteBtn = document.querySelector('#popup button[onclick="deletePopup()"]');
 
-			if (!imageUrl || !linkUrl) {
-				showAlert('❌ Vui lòng nhập đầy đủ thông tin', 'danger');
+			if (!linkUrl) {
+				showAlert('❌ Vui lòng nhập link URL', 'danger');
 				return;
 			}
 
+			if (!fileInput.files || !fileInput.files[0]) {
+				showAlert('❌ Vui lòng chọn hình ảnh', 'danger');
+				return;
+			}
+
+			// Set loading state
+			const originalText = submitBtn.innerHTML;
+			submitBtn.innerHTML = '<span class="loading-spinner"></span> Đang xử lý...';
+			submitBtn.disabled = true;
+			if (deleteBtn) deleteBtn.disabled = true;
+
 			try {
+				// Upload image first
+				const formData = new FormData();
+				formData.append('file', fileInput.files[0]);
+				const imageUrl = await uploadImage(formData);
+
 				const response = await fetch('/api/admin/popup', {
 					method: 'POST',
 					headers: {
@@ -1247,7 +1404,12 @@
 					showAlert('❌ ' + data.error, 'danger');
 				}
 			} catch (error) {
-				showAlert('❌ Lỗi kết nối server', 'danger');
+				showAlert('❌ Lỗi: ' + error.message, 'danger');
+			} finally {
+				// Reset loading state
+				submitBtn.innerHTML = originalText;
+				submitBtn.disabled = false;
+				if (deleteBtn) deleteBtn.disabled = false;
 			}
 		}
 
@@ -1255,6 +1417,15 @@
 			if (!confirm('❓ Bạn có chắc muốn xóa popup này?')) {
 				return;
 			}
+
+			const deleteBtn = document.querySelector('button[onclick="deletePopup()"]');
+			const submitBtn = document.querySelector('#popup button[type="submit"]');
+
+			// Set loading state
+			const originalText = deleteBtn.innerHTML;
+			deleteBtn.innerHTML = '<span class="loading-spinner"></span> Đang xử lý...';
+			deleteBtn.disabled = true;
+			if (submitBtn) submitBtn.disabled = true;
 
 			try {
 				const response = await fetch('/api/admin/popup', {
@@ -1267,7 +1438,7 @@
 				const data = await response.json();
 				if (data.success) {
 					showAlert('✅ ' + data.message, 'success');
-					document.getElementById('popup-image-url').value = '';
+					document.getElementById('popup-image-file').value = '';
 					document.getElementById('popup-link-url').value = '';
 					document.getElementById('popup-image-preview-container').style.display = 'none';
 				} else {
@@ -1275,6 +1446,11 @@
 				}
 			} catch (error) {
 				showAlert('❌ Lỗi kết nối server', 'danger');
+			} finally {
+				// Reset loading state
+				deleteBtn.innerHTML = originalText;
+				deleteBtn.disabled = false;
+				if (submitBtn) submitBtn.disabled = false;
 			}
 		}
 
@@ -1283,6 +1459,12 @@
 
 			const username = document.getElementById('username').value;
 			const password = document.getElementById('password').value;
+			const submitBtn = e.target.querySelector('button[type="submit"]');
+
+			// Set loading state
+			const originalText = submitBtn.innerHTML;
+			submitBtn.innerHTML = '<span class="loading-spinner"></span> Đang đăng nhập...';
+			submitBtn.disabled = true;
 
 			try {
 				const response = await fetch('/api/admin/login', {
@@ -1306,6 +1488,10 @@
 				}
 			} catch (error) {
 				showLoginError('Lỗi kết nối server');
+			} finally {
+				// Reset loading state
+				submitBtn.innerHTML = originalText;
+				submitBtn.disabled = false;
 			}
 		}
 
@@ -1564,7 +1750,7 @@
 
 		function renderPopup(popup) {
 			if (popup) {
-				document.getElementById('popup-image-url').value = popup.image_url;
+				document.getElementById('popup-image-file').value = '';
 				document.getElementById('popup-link-url').value = popup.link_url;
 
 				// Show preview
@@ -1572,7 +1758,7 @@
 				previewImg.src = popup.image_url;
 				document.getElementById('popup-image-preview-container').style.display = 'block';
 			} else {
-				document.getElementById('popup-image-url').value = '';
+				document.getElementById('popup-image-file').value = '';
 				document.getElementById('popup-link-url').value = '';
 				document.getElementById('popup-image-preview-container').style.display = 'none';
 			}
@@ -1580,11 +1766,19 @@
 
 		async function updateVideo() {
 			const youtubeUrl = document.getElementById('youtube-url').value;
+			const updateBtn = document.querySelector('button[onclick="updateVideo()"]');
+			const deleteBtn = document.querySelector('button[onclick="deleteVideo()"]');
 
 			if (!youtubeUrl) {
 				showAlert('❌ Vui lòng nhập YouTube URL', 'danger');
 				return;
 			}
+
+			// Set loading state
+			const originalText = updateBtn.innerHTML;
+			updateBtn.innerHTML = '<span class="loading-spinner"></span> Đang xử lý...';
+			updateBtn.disabled = true;
+			if (deleteBtn) deleteBtn.disabled = true;
 
 			try {
 				const response = await fetch('/api/admin/video', {
@@ -1608,6 +1802,11 @@
 				}
 			} catch (error) {
 				showAlert('❌ Lỗi kết nối server', 'danger');
+			} finally {
+				// Reset loading state
+				updateBtn.innerHTML = originalText;
+				updateBtn.disabled = false;
+				if (deleteBtn) deleteBtn.disabled = false;
 			}
 		}
 
@@ -1615,6 +1814,15 @@
 			if (!confirm('❓ Bạn có chắc muốn xóa video này?')) {
 				return;
 			}
+
+			const deleteBtn = document.querySelector('button[onclick="deleteVideo()"]');
+			const updateBtn = document.querySelector('button[onclick="updateVideo()"]');
+
+			// Set loading state
+			const originalText = deleteBtn.innerHTML;
+			deleteBtn.innerHTML = '<span class="loading-spinner"></span> Đang xử lý...';
+			deleteBtn.disabled = true;
+			if (updateBtn) updateBtn.disabled = true;
 
 			try {
 				const response = await fetch('/api/admin/video', {
@@ -1635,6 +1843,11 @@
 				}
 			} catch (error) {
 				showAlert('❌ Lỗi kết nối server', 'danger');
+			} finally {
+				// Reset loading state
+				deleteBtn.innerHTML = originalText;
+				deleteBtn.disabled = false;
+				if (updateBtn) updateBtn.disabled = false;
 			}
 		}
 
