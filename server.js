@@ -13,10 +13,59 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Simple session management for admin
-const sessions = new Map(); // In production, use Redis or proper session store
+// Session management using Redis
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+
+// Session helper functions
+async function createSession(sessionId, sessionData) {
+  const session = {
+    ...sessionData,
+    expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+  };
+  
+  // Store session in Redis with TTL (24 hours)
+  await cache.set(`session:${sessionId}`, session, 24 * 60 * 60);
+  return session;
+}
+
+async function getSession(sessionId) {
+  const session = await cache.get(`session:${sessionId}`);
+  if (!session) return null;
+  
+  // Check if session is expired
+  if (Date.now() > session.expiresAt) {
+    await deleteSession(sessionId);
+    return null;
+  }
+  
+  return session;
+}
+
+async function updateSession(sessionId, sessionData) {
+  const session = await getSession(sessionId);
+  if (!session) return null;
+  
+  // Update session data
+  const updatedSession = {
+    ...session,
+    ...sessionData,
+    expiresAt: Date.now() + (24 * 60 * 60 * 1000) // Extend to 24 hours
+  };
+  
+  // Store updated session in Redis with TTL
+  await cache.set(`session:${sessionId}`, updatedSession, 24 * 60 * 60);
+  return updatedSession;
+}
+
+async function deleteSession(sessionId) {
+  await cache.del(`session:${sessionId}`);
+}
+
+async function sessionExists(sessionId) {
+  const session = await getSession(sessionId);
+  return session !== null;
+}
 
 // Generate session ID
 function generateSessionId() {
@@ -24,23 +73,27 @@ function generateSessionId() {
 }
 
 // Middleware to check admin authentication
-function requireAdminAuth(req, res, next) {
-  const sessionId = req.headers.authorization?.replace('Bearer ', '');
-  
-  if (!sessionId || !sessions.has(sessionId)) {
-    return res.status(401).json({ error: 'Unauthorized' });
+async function requireAdminAuth(req, res, next) {
+  try {
+    const sessionId = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!sessionId || !(await sessionExists(sessionId))) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    const session = await getSession(sessionId);
+    if (!session) {
+      return res.status(401).json({ error: 'Session expired' });
+    }
+    
+    // Extend session
+    await updateSession(sessionId, { lastAccess: Date.now() });
+    req.adminSession = session;
+    next();
+  } catch (error) {
+    console.error('Error in requireAdminAuth:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
-  
-  const session = sessions.get(sessionId);
-  if (Date.now() > session.expiresAt) {
-    sessions.delete(sessionId);
-    return res.status(401).json({ error: 'Session expired' });
-  }
-  
-  // Extend session
-  session.expiresAt = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
-  req.adminSession = session;
-  next();
 }
 
 /**
@@ -141,13 +194,10 @@ app.post('/api/admin/login', async (req, res) => {
     
     // Create session
     const sessionId = generateSessionId();
-    const session = {
+    const session = await createSession(sessionId, {
       username: ADMIN_USERNAME,
-      loginTime: new Date().toISOString(),
-      expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-    };
-    
-    sessions.set(sessionId, session);
+      loginTime: new Date().toISOString()
+    });
     
     res.json({
       success: true,
@@ -169,7 +219,7 @@ app.post('/api/admin/logout', requireAdminAuth, async (req, res) => {
   try {
     const sessionId = req.headers.authorization?.replace('Bearer ', '');
     if (sessionId) {
-      sessions.delete(sessionId);
+      await deleteSession(sessionId);
     }
     
     res.json({
@@ -198,6 +248,63 @@ app.get('/api/admin/check', requireAdminAuth, async (req, res) => {
     });
   } catch (error) {
     console.error('Lỗi khi check admin session:', error);
+    res.status(500).json({ error: 'Lỗi server nội bộ' });
+  }
+});
+
+/**
+ * GET /api/admin/sessions
+ * Get all active sessions (admin only)
+ */
+app.get('/api/admin/sessions', requireAdminAuth, async (req, res) => {
+  try {
+    // Since we can't easily get all session keys from Upstash Redis,
+    // we'll return a simplified response
+    res.json({
+      success: true,
+      message: 'Session management active',
+      note: 'Individual session management available via session ID'
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách sessions:', error);
+    res.status(500).json({ error: 'Lỗi server nội bộ' });
+  }
+});
+
+/**
+ * DELETE /api/admin/sessions/:sessionId
+ * Delete specific session (admin only)
+ */
+app.delete('/api/admin/sessions/:sessionId', requireAdminAuth, async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    await deleteSession(sessionId);
+    
+    res.json({
+      success: true,
+      message: 'Session đã được xóa'
+    });
+  } catch (error) {
+    console.error('Lỗi khi xóa session:', error);
+    res.status(500).json({ error: 'Lỗi server nội bộ' });
+  }
+});
+
+/**
+ * POST /api/admin/sessions/cleanup
+ * Cleanup expired sessions (admin only)
+ */
+app.post('/api/admin/sessions/cleanup', requireAdminAuth, async (req, res) => {
+  try {
+    // Since we can't easily scan all keys in Upstash Redis,
+    // we'll rely on TTL for automatic cleanup
+    res.json({
+      success: true,
+      message: 'Sessions sẽ tự động hết hạn sau 24 giờ',
+      note: 'Redis TTL handles automatic cleanup'
+    });
+  } catch (error) {
+    console.error('Lỗi khi cleanup sessions:', error);
     res.status(500).json({ error: 'Lỗi server nội bộ' });
   }
 });
@@ -409,7 +516,7 @@ app.post('/api/admin/video', requireAdminAuth, async (req, res) => {
     }
     
     // Validate YouTube URL and extract video ID
-    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     const match = youtube_url.match(youtubeRegex);
     
     if (!match) {

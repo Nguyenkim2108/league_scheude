@@ -461,11 +461,18 @@ class LoLEsportsApp {
     // Group events by date
     const groupedEvents = this.groupEventsByDate(events);
 
-    // Render each date group
-    Object.keys(groupedEvents).sort().forEach(dateKey => {
-      const dateGroup = groupedEvents[dateKey];
-      this.renderDateGroup(dateKey, dateGroup, container);
-    });
+    // Render each date group - sort by actual date, not alphabetically
+    Object.keys(groupedEvents)
+      .sort((a, b) => {
+        // Convert date strings to Date objects for proper comparison
+        const dateA = new Date(a.split('/').reverse().join('-'));
+        const dateB = new Date(b.split('/').reverse().join('-'));
+        return dateA - dateB;
+      })
+      .forEach(dateKey => {
+        const dateGroup = groupedEvents[dateKey];
+        this.renderDateGroup(dateKey, dateGroup, container);
+      });
 
     // Add load next button at the bottom
     this.addLoadNextButton(container);
@@ -482,7 +489,13 @@ class LoLEsportsApp {
     const groupedEvents = this.groupEventsByDate(events);
 
     // Sort dates in ascending order (oldest first) for proper chronological order
-    const sortedDateKeys = Object.keys(groupedEvents).sort();
+    const sortedDateKeys = Object.keys(groupedEvents)
+      .sort((a, b) => {
+        // Convert date strings to Date objects for proper comparison
+        const dateA = new Date(a.split('/').reverse().join('-'));
+        const dateB = new Date(b.split('/').reverse().join('-'));
+        return dateA - dateB;
+      });
 
     // Find the position to insert (after load-prev-btn but before first date group)
     const firstDateGroup = container.querySelector('.date-group');

@@ -701,6 +701,7 @@
 						</div>
 					</div>
 				</div>
+				<!-- Social Management -->
 				<div class="tab-pane fade" id="socials">
 					<div class="row">
 						<div class="col-lg-8">
@@ -843,7 +844,6 @@
 			</div>
 		</div>
 
-		<!-- Social Management -->
 
 	</div>
 	</div>
@@ -1043,7 +1043,7 @@
 			if (fileInput.files && fileInput.files[0]) {
 				const file = fileInput.files[0];
 				const reader = new FileReader();
-				reader.onload = function(e) {
+				reader.onload = function (e) {
 					previewImg.src = e.target.result;
 					previewContainer.style.display = 'block';
 				};
@@ -1061,7 +1061,7 @@
 			if (fileInput.files && fileInput.files[0]) {
 				const file = fileInput.files[0];
 				const reader = new FileReader();
-				reader.onload = function(e) {
+				reader.onload = function (e) {
 					previewImg.src = e.target.result;
 					previewContainer.style.display = 'block';
 				};
@@ -1118,20 +1118,20 @@
 				canvas.width = 800;
 				canvas.height = 400;
 				const ctx = canvas.getContext('2d');
-				
+
 				// Create gradient background
 				const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
 				gradient.addColorStop(0, '#C89B3C');
 				gradient.addColorStop(1, '#A17A2B');
 				ctx.fillStyle = gradient;
 				ctx.fillRect(0, 0, canvas.width, canvas.height);
-				
+
 				// Add text
 				ctx.fillStyle = '#FFFFFF';
 				ctx.font = 'bold 48px Arial';
 				ctx.textAlign = 'center';
-				ctx.fillText('Test Banner', canvas.width/2, canvas.height/2);
-				
+				ctx.fillText('Test Banner', canvas.width / 2, canvas.height / 2);
+
 				// Convert to blob
 				canvas.toBlob(async (blob) => {
 					try {
@@ -1139,7 +1139,7 @@
 						const formData = new FormData();
 						formData.append('file', blob, 'test-banner.png');
 						const testImageUrl = await uploadImage(formData);
-						
+
 						// Add to banner1
 						await saveBannerToServer('banner1', testImageUrl, 'https://example.com/banner1');
 						// Add to banner2  
@@ -1187,7 +1187,7 @@
 
 			try {
 				let imageUrl = null;
-				
+
 				// If there's a new file selected, upload it
 				if (fileInput.files && fileInput.files[0]) {
 					const formData = new FormData();
